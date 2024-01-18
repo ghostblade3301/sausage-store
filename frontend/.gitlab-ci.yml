@@ -18,12 +18,6 @@ build-frontend-code-job:
 
 telegram-notification-frontend:
   stage: notify
-  needs:
-    - job: build-frontend-code-job
-      artifacts: true
-  rules:
-    - exists:
-        - $CI_COMMIT_MESSAGE =~ /send notification/
   script: |
       ls
   

@@ -16,13 +16,6 @@ build-backend-code-job:
 
 
 telegram-notification-backend:
-  stage: notify
-  needs:
-    - job: build-backend-code-job
-      artifacts: true
-  rules:
-    - exists:
-        - $CI_COMMIT_MESSAGE =~ /send notification/
   script: |
       ls
 

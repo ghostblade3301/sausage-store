@@ -20,8 +20,10 @@ telegram-notification-backend:
   needs:
     - job: build-backend-code-job
   rules:
+    - changes:
+        - "**"
     - exists:
-        - $CI_COMMIT_MESSAGE =~ /send notification/
-  script: |
-      ls
+        - $CI_COMMIT_MESSAGE =~ /notification/
+  script:
+    - echo "Sending notification"
 

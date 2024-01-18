@@ -18,9 +18,6 @@ telegram-notification-backend:
   rules:
     - exists:
         - $CI_COMMIT_MESSAGE =~ /send notification/
-  only:
-    changes:
-    - backend/*
   script:
     - 'curl -X POST -H "Content-type: application/json" \
       --data "{\"chat_id\": \"-1002056379103\", \"text\": \"Павел Науменко собрал backend. URL: $CI_PROJECT_URL/-/jobs/artifacts/<path_to_jar_file>?job=build-backend-code-job\"}" \

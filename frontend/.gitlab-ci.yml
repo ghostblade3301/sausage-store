@@ -15,7 +15,7 @@ build-frontend-code-job:
     paths:
       - frontend/dist/frontend
   variables:
-      NEEDS_JOB: "$CI_JOB_NAME"
+    NEEDS_JOB: "$CI_JOB_NAME"
 
 
 telegram-notification-frontend:

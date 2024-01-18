@@ -6,7 +6,7 @@ build-frontend-code-job:
   stage: build  
   only:
     changes:
-    - frontend/*
+    - "frontend/*"
   script:        
     - cd frontend
     - npm install
@@ -18,7 +18,11 @@ build-frontend-code-job:
 telegram-notification-frontend:
   stage: notify
   needs:
-    - build-frontend-code-job
+    - job: build-frontend-code-job
+      artifacts: true
+  only:
+    changes:
+      - "frontend/*"
   rules:
     - exists:
         - $CI_COMMIT_MESSAGE =~ /send notification/

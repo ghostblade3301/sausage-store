@@ -14,8 +14,12 @@ build-backend-code-job:
     paths:
       - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
 
+
 telegram-notification-backend:
   stage: notify
+  needs:
+    - job: build-backend-code-job
+      artifacts: true
   script: |
       ls
 

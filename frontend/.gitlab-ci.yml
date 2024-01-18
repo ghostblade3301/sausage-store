@@ -15,8 +15,11 @@ build-frontend-code-job:
     paths:
       - frontend/dist/frontend
 
+
 telegram-notification-frontend:
   stage: notify
+  needs:
+    - job: build-frontend-code-job
   script: |
       ls
   

@@ -20,9 +20,6 @@ telegram-notification-frontend:
   needs:
     - job: build-frontend-code-job
       artifacts: true
-  only:
-    changes:
-      - "frontend/*"
   rules:
     - exists:
         - $CI_COMMIT_MESSAGE =~ /send notification/

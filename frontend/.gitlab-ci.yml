@@ -16,6 +16,7 @@ build-frontend-code-job:
   artifacts:
     paths:
       - frontend/dist/frontend
+      - build.env
     reports:
       dotenv: build.env
 

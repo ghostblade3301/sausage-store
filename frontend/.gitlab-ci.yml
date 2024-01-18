@@ -21,7 +21,7 @@ telegram-notification-frontend:
   needs:
     - job: build-frontend-code-job
   rules:
-    - if $CI_COMMIT_MESSAGE =~ /notification/
+    - if: $CI_COMMIT_MESSAGE =~ /notification/
   script:
     - echo "Sending notification"
 

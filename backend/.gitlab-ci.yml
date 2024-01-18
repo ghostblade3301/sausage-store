@@ -20,7 +20,7 @@ telegram-notification-backend:
   needs:
     - job: build-backend-code-job
   rules:
-    - if $CI_COMMIT_MESSAGE =~ /notification/
+    - if: $CI_COMMIT_MESSAGE =~ /notification/
   script:
     - echo "Sending notification"
 

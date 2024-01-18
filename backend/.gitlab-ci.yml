@@ -21,6 +21,8 @@ telegram-notification-backend:
     - job: build-backend-code-job
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /notification/
-  script:
-    - echo "Sending notification"
+  script: |
+      curl -X POST -H "Content-type: application/json" \
+      --data "{\"chat_id\": \"-1002056379103\", \"text\": \"Павел Науменко собрал backend. URL: $CI_PROJECT_URL/-/jobs/artifacts/sausage-store-0.0.1/sausage-store-0.0.1/public_html?job=build-backend-code-job\"}" \
+      https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
 

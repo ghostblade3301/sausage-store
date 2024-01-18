@@ -23,7 +23,8 @@ telegram-notification-frontend:
     - exists:
         - $CI_COMMIT_MESSAGE =~ /send notification/
   script:
-    - 'sh curl -X POST -H "Content-type: application/json" \
+    - |
+      sh curl -X POST -H "Content-type: application/json" \
       --data "{\"chat_id\": \"-1002056379103\", \"text\": \"Павел Науменко собрал frontend. URL: $CI_PROJECT_URL/-/jobs/artifacts/sausage-store-0.0.1/sausage-store-0.0.1/public_html?job=build-backend-code-job\"}" \
-      https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage'
+      https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
   

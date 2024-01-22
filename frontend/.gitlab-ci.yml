@@ -2,7 +2,6 @@ stages:
   - build
   - notify
 
-
 build-frontend-code-job:
   stage: build  
   only:
@@ -15,7 +14,6 @@ build-frontend-code-job:
   artifacts:
     paths:
       - frontend/dist/frontend
-
 
 telegram-notification-frontend:
   stage: notify

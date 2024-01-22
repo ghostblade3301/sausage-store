@@ -15,6 +15,7 @@ build-backend-code-job:
     paths:
       - backend/target/sausage-store-0.0.1-SNAPSHOT.jar
 
+
 telegram-notification-backend:
   stage: notify
   needs:
@@ -23,5 +24,5 @@ telegram-notification-backend:
     - if: $CI_COMMIT_MESSAGE =~ /notification/
   script: |
       curl -X POST -H "Content-type: application/json" \
-      --data "{\"chat_id\": \"-1002056379103\", \"text\": \"Павел Науменко собрал backend. URL: $CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-backend-code-job\"}" \
-      https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
+      --data "{\"chat_id\": \"6342685754\", \"text\": \"Павел Науменко собрал backend. URL: $CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-backend-code-job\"}" \
+      https://api.telegram.org/bot6342685754:AAGYs_X-HXuc627KOHsuD1BNM_sNW2okzGk/sendMessage

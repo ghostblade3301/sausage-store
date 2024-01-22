@@ -1,0 +1,29 @@
+stages:
+  - build
+  - notify
+
+build-frontend-code-job:
+  stage: build  
+  only:
+    changes:
+    - "frontend/*"
+  script:        
+    - cd frontend
+    - npm install
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/frontend
+
+telegram-notification-frontend:
+  stage: notify
+  needs:
+    - job: build-frontend-code-job
+  rules:
+    - if: $CI_COMMIT_MESSAGE =~ /send notification/
+  script: |
+      curl -X POST -H "Content-type: application/json" \
+      --data "{\"chat_id\": \"-1002056379103\", \"text\": \"Павел Науменко собрал frontend. URL: $CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-frontend-code-job\"}" \
+      https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
+
+  

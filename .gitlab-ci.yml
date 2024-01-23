@@ -1,3 +1,8 @@
-include: 
-  - 'backend/.gitlab-ci.yml'
-  - 'frontend/.gitlab-ci.yml'
+include:
+  - local: '/backend/.gitlab-ci.yml'
+  - local: '/frontend/.gitlab-ci.yml'
+
+stages:
+  - build
+  - test
+  - notify

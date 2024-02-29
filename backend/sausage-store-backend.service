@@ -1,0 +1,16 @@
+[Unit]
+Description=Sausage Store Backend Service
+After=network.target
+
+[Service]
+User=backend
+Group=backend
+Restart=always
+WorkingDirectory=/opt/sausage-store/bin/
+Environment=LOG_PATH=/var/log/sausage-store/sausage-store-backend.log
+Environment=REPORT_PATH=/var/log/sausage-store/report.log
+StandardOutput=append:/var/log/sausage-store/sausage-store-backend.log
+ExecStart=/usr/lib/jvm/java-16-openjdk-amd64/bin/java -jar /opt/sausage-store/bin/sausage-store-backend.jar
+
+[Install]
+WantedBy=multi-user.target

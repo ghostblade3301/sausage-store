@@ -5,10 +5,13 @@ After=network.target
 [Service]
 User=backend
 Group=backend
-Restart=always
 WorkingDirectory=/opt/sausage-store/bin/
+EnvironmentFile=/home/student/.env
 Environment=LOG_PATH=/var/log/sausage-store/sausage-store-backend.log
 Environment=REPORT_PATH=/var/log/sausage-store/report.log
+Environment=SPRING_DATASOURCE_URL=jdbc:postgresql://${PSQL_HOST}:${PSQL_PORT}/${PSQL_DBNAME}?ssl=true
+Environment=SPRING_DATASOURCE_USERNAME=${PSQL_USER}
+Environment=SPRING_DATASOURCE_PASSWORD=${PSQL_PASSWORD}
 StandardOutput=append:/var/log/sausage-store/sausage-store-backend.log
 ExecStart=/usr/lib/jvm/java-16-openjdk-amd64/bin/java -jar /opt/sausage-store/bin/sausage-store-backend.jar
 

@@ -98,10 +98,16 @@ deploy:
       export "NEXUS_REPO_USER=${NEXUS_REPO_USER}";
       export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";
       export "NEXUS_REPO_BACKEND_NAME=${NEXUS_REPO_BACKEND_NAME}";
+      export "PSQL_DBNAME=${PSQL_DBNAME}";
+      export "PSQL_HOST=${PSQL_HOST}";
+      export "PSQL_PASSWORD=${PSQL_PASSWORD}";
+      export "PSQL_PORT=${PSQL_PORT}";
+      export "PSQL_USER=${PSQL_USER}";
       setsid /bin/bash -s " < ./backend/deploy.sh
+
   environment:
     name: review_backend/$CI_COMMIT_REF_NAME
     url: http://${DEV_HOST}/api/products
     auto_stop_in: 1 day
-  rules:
-    - when: manual
+  # rules:
+  #   - when: manual

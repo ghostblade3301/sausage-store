@@ -93,7 +93,13 @@ deploy:
     - scp ./backend/sausage-store-backend.service ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store-backend.service
     - >
       ssh ${DEV_USER}@${DEV_HOST} "export "CURRENT_VERSION=${VERSION}";
-      export "VERSION=${VERSION}"; export "DEV_HOST=${DEV_HOST}";
+      export "VERSION=${VERSION}";
+      export "DEV_HOST=${DEV_HOST}";
+      export "MONGO_USER=${MONGO_USER}";
+      export "MONGO_PASSWORD=${MONGO_PASSWORD}";
+      export "MONGO_HOST=${MONGO_HOST}";
+      export "MONGO_PORT=${MONGO_PORT}";
+      export "MONGO_DATABASE=${MONGO_DATABASE}";
       export "NEXUS_REPO_URL=${NEXUS_REPO_URL}";
       export "NEXUS_REPO_USER=${NEXUS_REPO_USER}";
       export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";
@@ -103,6 +109,7 @@ deploy:
       export "PSQL_PASSWORD=${PSQL_PASSWORD}";
       export "PSQL_PORT=${PSQL_PORT}";
       export "PSQL_USER=${PSQL_USER}";
+      export "KEYSTORE_PASSWORD=${KEYSTORE_PASSWORD}";
       setsid /bin/bash -s " < ./backend/deploy.sh
 
   environment:

@@ -1,14 +1,25 @@
+cache:
+  paths:
+    - ${CI_PROJECT_DIR}/.m2/repository
+
+variables:
+  VERSION: 1.0.${CI_PIPELINE_ID}
+  MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
+  JAVA_OPTS: -XX:MaxRAMPercentage=90
+
 stages:
   - build
 
 build-frontend-image:
   stage: build
-  image: alpine:3.18
+  image: 
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: [""]
   script:
     - echo "test"
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
-      --dockerfile "${CI_PROJECT_DIR}/frontend/infra/Dockerfile_frontend"
+      --dockerfile "${CI_PROJECT_DIR}/infra/Dockerfile_frontend"
       --destination "${CI_REGISTRY_IMAGE}/sausage-frontend:latest"
       --build-arg VERSION=$VERSION
       --cache=true

@@ -1,12 +1,9 @@
-default:
-  before_script:
-    - docker info
-
 stages:
   - build
 
 build-backend-image:
   stage: build
+  image: docker:latest
   script:
     - docker build -t ${DOCKERHUB_USERNAME}/sausage-backend:latest -f infra/Dockerfile_backend .
     - echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin

@@ -1,10 +1,9 @@
-image: docker:latest
+default:
+  before_script:
+    - docker info
 
-services:
-  - docker:dind
-
-variables:
-  DOCKER_DRIVER: overlay
+stages:
+  - build
 
 build-backend-image:
   stage: build

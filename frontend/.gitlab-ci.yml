@@ -7,7 +7,7 @@ build-frontend-image:
   script:
     - echo "test"
     - /kaniko/executor
-      --context "${CI_PROJECT_DIR}/"
+      --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/frontend/Dockerfile_frontend"
       --destination "${CI_REGISTRY_IMAGE}/sausage-frontend:latest"
       --build-arg VERSION=$VERSION

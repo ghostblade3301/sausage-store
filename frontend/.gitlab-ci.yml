@@ -5,12 +5,13 @@ build-frontend-image:
   stage: build
   image: alpine:3.18
   script:
-    - apk add curl
-    - curl -fsSL https://get.docker.com -o get-docker.sh
-    - sh get-docker.sh
-    - sudo docker build -t ${DOCKERHUB_USERNAME}/sausage-frontend:latest -f infra/Dockerfile_frontend .
-    - echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
-    - sudo docker push ${DOCKERHUB_USERNAME}/sausage-frontend:latest
+    - echo "test"
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}/"
+      --dockerfile "${CI_PROJECT_DIR}/frontend/Dockerfile_frontend"
+      --destination "${CI_REGISTRY_IMAGE}/sausage-frontend:latest"
+      --build-arg VERSION=$VERSION
+      --cache=true
   only:
      changes:
      - frontend/**/*

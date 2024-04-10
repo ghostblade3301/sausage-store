@@ -6,7 +6,7 @@ build-backend-image:
   image: ubuntu:latest
   script:
     - apt update
-    - apt install curl -y
+    - apt install curl apt-utils -y
     - curl -fsSL https://get.docker.com -o get-docker.sh
     - sh get-docker.sh
     - docker build -t ${DOCKERHUB_USERNAME}/sausage-backend:latest -f infra/Dockerfile_backend .

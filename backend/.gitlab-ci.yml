@@ -6,7 +6,7 @@ services:
 
 build-backend-image:
   stage: build
-  image: ubuntu:latest
+  image: docker:latest
   script:
     - apt update
     - apt install curl apt-utils -y

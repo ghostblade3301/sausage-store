@@ -8,9 +8,9 @@ build-backend-image:
     entrypoint: [""]
   script:
     - echo "test"
-    - /kaniko/executor
     - ls -la
     - pwd
+    - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/infra/Dockerfile_backend"
       --destination "${CI_REGISTRY_IMAGE}/sausage-backend:latest"

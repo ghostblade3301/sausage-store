@@ -1,6 +1,9 @@
 stages:
   - build
 
+services:
+  - docker:dind
+
 build-frontend-image:
   stage: build
   image: ubuntu:latest

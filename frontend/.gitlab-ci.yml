@@ -9,7 +9,7 @@ build-frontend-image:
     apt update
     apt install curl
     curl -fsSL https://get.docker.com -o get-docker.sh
-    get-docker.sh -y
+    Y | get-docker.sh
   script:
     - docker build -t ${DOCKERHUB_USERNAME}/sausage-frontend:latest -f infra/Dockerfile_frontend .
     - echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin

@@ -4,12 +4,9 @@ stages:
 build-frontend-image:
   stage: build
   image: ubuntu:latest
-  before_script: 
-  - |
-    
   script:
     - apt update
-    - apt install curl
+    - apt install curl -y
     - curl -fsSL https://get.docker.com -o get-docker.sh
     - sh get-docker.sh
     - docker build -t ${DOCKERHUB_USERNAME}/sausage-frontend:latest -f infra/Dockerfile_frontend .

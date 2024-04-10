@@ -5,7 +5,7 @@ build-frontend-image:
   stage: build
   image: alpine:3.18
   script:
-    - apk add curl apt-utils
+    - apk add curl
     - curl -fsSL https://get.docker.com -o get-docker.sh
     - sh get-docker.sh
     - sudo docker build -t ${DOCKERHUB_USERNAME}/sausage-frontend:latest -f infra/Dockerfile_frontend .

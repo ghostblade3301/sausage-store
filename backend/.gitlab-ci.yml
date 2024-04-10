@@ -8,10 +8,6 @@ build-backend-image:
   stage: build
   image: docker:latest
   script:
-    - apt update
-    - apt install curl apt-utils -y
-    - curl -fsSL https://get.docker.com -o get-docker.sh
-    - sh get-docker.sh
     - docker build -t ${DOCKERHUB_USERNAME}/sausage-backend:latest -f infra/Dockerfile_backend .
     - echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
     - docker push ${DOCKERHUB_USERNAME}/sausage-backend:latest

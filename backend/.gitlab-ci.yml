@@ -8,7 +8,7 @@ build-backend-image:
   stage: build
   image: alpine:3.18
   script:
-    - apk add curl apt-utils -y
+    - apk add curl apt-utils
     - curl -fsSL https://get.docker.com -o get-docker.sh
     - sh get-docker.sh
     - sudo docker build -t ${DOCKERHUB_USERNAME}/sausage-backend:latest -f infra/Dockerfile_backend .

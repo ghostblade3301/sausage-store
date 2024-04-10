@@ -1,11 +1,13 @@
 stages:
   - build
-  
+
 build-frontend-image:
   stage: build
   image: ubuntu:latest
   before_script: 
   - |
+    apt update
+    apt install curl
     curl -fsSL https://get.docker.com -o get-docker.sh
     sh ./get-docker.sh --dry-run
   script:

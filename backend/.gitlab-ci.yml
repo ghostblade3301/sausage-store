@@ -12,8 +12,8 @@ build-backend-image:
   script:
     - echo "test"
     - /kaniko/executor
-      --context "${CI_PROJECT_DIR}"
-      --dockerfile "backend/Dockerfile_backend"
+      --context "${CI_PROJECT_DIR}/infra"
+      --dockerfile "${CI_PROJECT_DIR}/infra/Dockerfile_backend"
       --destination "${CI_REGISTRY_IMAGE}/sausage-backend:latest"
       --build-arg VERSION=$VERSION
       --cache=true

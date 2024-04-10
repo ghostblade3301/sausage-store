@@ -1,7 +1,7 @@
 stages:
   - build
 
-build-build-backend-image:
+build-backend-image:
   stage: build
   script:
     - docker build -t ${DOCKERHUB_USERNAME}/sausage-backend:latest -f infra/Dockerfile_backend .

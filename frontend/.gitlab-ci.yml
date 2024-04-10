@@ -4,6 +4,8 @@ stages:
 build-frontend-image:
   stage: build  
   script:
+    - apt-get update -y
+    - apt-get install -y docker.io
     - docker build -t ${DOCKERHUB_USERNAME}/sausage-frontend:latest -f infra/Dockerfile_frontend .
     - echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
     - docker push ${DOCKERHUB_USERNAME}/sausage-frontend:latest

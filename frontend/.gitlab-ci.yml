@@ -18,11 +18,15 @@ build-frontend-image:
   script:
     - echo "test"
     - /kaniko/executor
+    - ls -la
+    - pwd
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/infra/Dockerfile_frontend"
       --destination "${CI_REGISTRY_IMAGE}/sausage-frontend:latest"
       --build-arg VERSION=$VERSION
       --cache=true
+    - ls -la
+    - pwd
   only:
      changes:
      - frontend/**/*

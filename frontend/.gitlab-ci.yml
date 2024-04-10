@@ -3,11 +3,14 @@ stages:
 
 build-frontend-image:
   stage: build
-  image: docker:latest
+  image: alpine:3.18
   script:
-    - docker build -t ${DOCKERHUB_USERNAME}/sausage-frontend:latest -f infra/Dockerfile_frontend .
+    - apk add curl apt-utils
+    - curl -fsSL https://get.docker.com -o get-docker.sh
+    - sh get-docker.sh
+    - sudo docker build -t ${DOCKERHUB_USERNAME}/sausage-frontend:latest -f infra/Dockerfile_frontend .
     - echo "${DOCKERHUB_PASSWORD}" | docker login -u "${DOCKERHUB_USERNAME}" --password-stdin
-    - docker push ${DOCKERHUB_USERNAME}/sausage-frontend:latest
+    - sudo docker push ${DOCKERHUB_USERNAME}/sausage-frontend:latest
   only:
      changes:
      - frontend/**/*

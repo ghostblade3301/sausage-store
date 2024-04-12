@@ -4,8 +4,7 @@ volumes:
 services:
   sausage-backend:
     container_name: sausage-backend
-    image: gitlab.praktikum-services.ru:5050/std-026-35/sausage-store/sausage-backend
-
+    image: ${CI_REGISTRY_IMAGE}/sausage-backend
     env_file:
       - .env
     expose:
@@ -13,7 +12,7 @@ services:
 
   sausage-frontend:
     container_name: sausage-frontend
-    image: gitlab.praktikum-services.ru:5050/std-026-35/sausage-store/sausage-frontend
+    image: ${CI_REGISTRY_IMAGE}/sausage-frontend
     env_file:
       - .env
     volumes:

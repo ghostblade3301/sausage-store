@@ -1,8 +1,8 @@
 FROM maven:3.9.3-eclipse-temurin-20-alpine as builder
 ARG VERSION=${VERSION}
 WORKDIR /usr/src/app
-COPY ../backend/src ./src
-COPY ../backend/*.xml ./
+COPY ./backend/src ./src
+COPY ./backend/*.xml ./
 RUN wget -O  YandexInternalRootCA.crt https://storage.yandexcloud.net/cloud-certs/CA.pem \
     && mvn package -Dversion.application=${VERSION} -Dmaven.test.skip=true
 

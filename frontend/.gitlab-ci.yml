@@ -45,8 +45,7 @@ telegram-notification-frontend:
 
 deploy:
   stage: deploy
-  needs:
-    - sonarqube-frontend-sast
+  needs: sonarqube-frontend-sast
   before_script:
     # устанавливаем ssh-agent для удобства аутентификации по ssh
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -61,9 +60,9 @@ deploy:
   script:
     - scp ./infra/docker-compose-production.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-production.yml
     - scp ./infra/nginx.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx.conf
-    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop frontend || true'
-    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f frontend || true'
-    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d frontend'
+    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop sausage-frontend || true'
+    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f sausage-frontend || true'
+    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d sausage-frontend'
 
 
 

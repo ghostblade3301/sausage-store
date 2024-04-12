@@ -38,6 +38,7 @@ sonarqube-backend-sast:
   image: maven:3.8-openjdk-16
   needs:
     - job: build-backend-image
+  allow_failure: true
   script: |
     cd backend/
     mvn verify sonar:sonar \

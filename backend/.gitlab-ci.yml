@@ -13,6 +13,6 @@ build-backend-image:
       --destination "${CI_REGISTRY_IMAGE}/sausage-backend:latest"
       --build-arg VERSION=$VERSION
       --cache=true
-  only:
-     changes:
-     - backend/**/*
+  # only:
+  #    changes:
+  #    - backend/**/*

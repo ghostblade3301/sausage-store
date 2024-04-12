@@ -1,6 +1,6 @@
 FROM node:16.20.0-alpine3.18 as builder
 WORKDIR /usr/src/app
-COPY ../frontend .
+COPY ./frontend .
 RUN npm ci && npm run build
 
 FROM nginx:stable-alpine3.17-slim

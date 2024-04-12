@@ -17,8 +17,6 @@ services:
       - .env
     volumes:
       - frontend_volume:/app/frontend
-    expose:
-      - 8080
 
   nginx:
     container_name: nginx

@@ -14,3 +14,28 @@ build-frontend-image:
       --build-arg VERSION=$VERSION
       --cache=true
 
+sonarqube-frontend-sast:
+  stage: test
+  image: sonarsource/sonar-scanner-cli
+  needs:
+    - job: build-frontend-code-job
+  script: |
+    cd frontend/
+    sonar-scanner \
+    -Dsonar.projectKey=$SONAR_PROJECT_KEY_FRONT \
+    -Dsonar.host.url=$SONARQUBE_URL \
+    -Dsonar.login=$SONAR_LOGIN_FRONTEND
+
+telegram-notification-frontend:
+  stage: notify
+  needs:
+    - job: sonarqube-frontend-sast
+  rules:
+    - if: $CI_COMMIT_MESSAGE =~ /send notification/
+  script: |
+      curl -X POST -H "Content-type: application/json" \
+      --data "{\"chat_id\": \"-1002056379103\", \"text\": \"Павел Науменко собрал и протестировал frontend by sonarqube. URL: $CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-frontend-code-job\"}" \
+      https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
+
+
+

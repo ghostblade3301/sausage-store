@@ -8,16 +8,12 @@ build-backend-image:
     entrypoint: [""]
   script:
     - echo "test"
-    - ls -la
-    - pwd
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/infra/Dockerfile_backend"
       --destination "${CI_REGISTRY_IMAGE}/sausage-backend:latest"
       --build-arg VERSION=$VERSION
       --cache=true
-    - ls -la
-    - pwd
   only:
      changes:
      - backend/**/*

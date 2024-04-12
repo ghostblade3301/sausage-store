@@ -57,5 +57,7 @@ deploy:
       LOG_PATH=/var/log/sausage-store/sausage-store-backend.log
       REPORT_PATH=/var/log/sausage-store/report.log
       EOT
-    - scp .env ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/.env
+    - |
+      ssh ${DEV_USER}@${DEV_HOST}
+      scp .env ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/.env
 

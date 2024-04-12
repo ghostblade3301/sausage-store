@@ -43,6 +43,7 @@ sonarqube-backend-sast:
   image: maven:3.8-openjdk-16
   needs:
     - job: build-backend-image
+    - job: spotbugs-sast
   script: |
     cd backend/
     mvn verify sonar:sonar \
@@ -55,13 +56,12 @@ telegram-notification-backend:
   stage: notify
   needs:
     - job: sonarqube-backend-sast
-    - job: spotbugs-sast
   rules:
     - if: $CI_COMMIT_MESSAGE =~ /notification/
   script: |
     curl -X POST -H "Content-type: application/json" \
     --data "{\"chat_id\": \"-1002056379103\", \"text\": \"Павел Науменко собрал и протестировал backend by sast and sonarqube. URL: $CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-backend-code-job\"}" \
-    https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
+    https://api.telegram.org/bot<YOUR_BOT_TOKEN>/sendMessage
 
 deploy:
   stage: deploy
@@ -106,4 +106,3 @@ deploy:
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop sausage-backend || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f sausage-backend || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d sausage-backend'
-

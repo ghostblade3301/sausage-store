@@ -50,6 +50,7 @@ deploy:
       REPORT_PATH=/var/log/sausage-store/report.log
       EOT
     - |
+      ls
       chmod +rwx infra/.env
       ls -la infra/
       cat infra/.env

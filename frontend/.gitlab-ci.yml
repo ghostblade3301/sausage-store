@@ -2,6 +2,7 @@ stages:
   - build
   - test
   - notify
+  - deploy
 
 build-frontend-image:
   stage: build
@@ -38,6 +39,28 @@ telegram-notification-frontend:
       curl -X POST -H "Content-type: application/json" \
       --data "{\"chat_id\": \"-1002056379103\", \"text\": \"Павел Науменко собрал и протестировал frontend by sonarqube. URL: $CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-frontend-code-job\"}" \
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
+
+deploy:
+  stage: deploy
+  needs:
+    - sonarqube-frontend-sast
+  before_script:
+    # устанавливаем ssh-agent для удобства аутентификации по ssh
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    # сохраняем сгенеренный ранее приватный ключ для раннера
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 600 ~/.ssh
+    - SSH_KNOWN_HOSTS=$(ssh-keyscan ${DEV_HOST})
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - scp ./infra/docker-compose-production.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-production.yml
+    - scp ./infra/nginx_local.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx.conf
+    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop frontend || true'
+    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f frontend || true'
+    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d frontend'
 
 
 

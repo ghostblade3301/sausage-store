@@ -23,8 +23,8 @@ backend:
 deploy:
   stage: deploy
   needs:
-    - frontend
     - backend
+    - frontend
   before_script:
     #устанавливаем ssh-agent для удобства аутентификации по ssh
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'

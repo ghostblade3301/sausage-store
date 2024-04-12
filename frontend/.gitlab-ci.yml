@@ -13,6 +13,4 @@ build-frontend-image:
       --destination "${CI_REGISTRY_IMAGE}/sausage-frontend:latest"
       --build-arg VERSION=$VERSION
       --cache=true
-  only:
-     changes:
-     - frontend/**/*
+

@@ -1,15 +1,6 @@
 include:
   - template: Security/SAST.gitlab-ci.yml
 
-cache:
-  paths:
-    - ${CI_PROJECT_DIR}/.m2/repository
-
-variables:
-   VERSION: 1.0.${CI_PIPELINE_ID}
-   MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
-   JAVA_OPTS: -XX:MaxRAMPercentage=90 # для того, чтобы Maven не съел всю свободную оперативку
-
 stages:
   - build
   - test
@@ -28,15 +19,6 @@ build-backend-image:
       --destination "${CI_REGISTRY_IMAGE}/sausage-backend:latest"
       --build-arg VERSION=$VERSION
       --cache=true
-
-spotbugs-sast:
-  stage: test
-  needs:
-    - job: build-backend-image
-  variables:
-    COMPILE: "false"
-    SAST_JAVA_VERSION: 11
-    MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
 
 sonarqube-backend-sast:
   stage: test

@@ -49,11 +49,8 @@ deploy:
       LOG_PATH=/var/log/sausage-store/sausage-store-backend.log
       REPORT_PATH=/var/log/sausage-store/report.log
       EOT
+    - ssh ${DEV_USER}@${DEV_HOST} 'rm -f .env'
     - |
-      ls
-      chmod +rwx infra/.env
-      ls -la infra/
-      cat infra/.env
-    - scp ./infra/docker-compose-production.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-local.yml
-    - scp ./infra/nginx_local.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx_local.conf
-    - scp ./infra/.env ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/.env
+      scp ./infra/docker-compose-production.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-local.yml
+      scp ./infra/nginx_local.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx_local.conf
+      scp ./infra/.env ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/.env

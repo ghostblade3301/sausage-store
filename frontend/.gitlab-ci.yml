@@ -1,5 +1,7 @@
 stages:
   - build
+  - test
+  - notify
 
 build-frontend-image:
   stage: build
@@ -18,7 +20,7 @@ sonarqube-frontend-sast:
   stage: test
   image: sonarsource/sonar-scanner-cli
   needs:
-    - job: build-frontend-code-job
+    - job: build-frontend-image
   script: |
     cd frontend/
     sonar-scanner \

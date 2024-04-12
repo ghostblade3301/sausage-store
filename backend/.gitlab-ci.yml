@@ -9,6 +9,7 @@ variables:
 stages:
   - build
   - test
+  - notify
 
 build-backend-image:
   stage: build
@@ -36,7 +37,7 @@ sonarqube-backend-sast:
   stage: test
   image: maven:3.8-openjdk-16
   needs:
-    - job: build-backend-code-job
+    - job: build-backend-image
   script: |
     cd backend/
     mvn verify sonar:sonar \

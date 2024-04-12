@@ -32,7 +32,7 @@ build-backend-image:
 spotbugs-sast:
   stage: test
   needs:
-    - job: build-backend-code-job
+    - job: build-backend-image
   variables:
     COMPILE: "false"
     SAST_JAVA_VERSION: 11
@@ -42,7 +42,7 @@ sonarqube-backend-sast:
   stage: test
   image: maven:3.8-openjdk-16
   needs:
-    - job: build-backend-code-job
+    - job: build-backend-image
   script: |
     cd backend/
     mvn verify sonar:sonar \

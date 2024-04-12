@@ -1,11 +1,6 @@
 stages:
   - module-pipelines
 
-cache:
-  paths:
-    - ${CI_PROJECT_DIR}/.m2/repository
-    - .npm/
-
 frontend:
   stage: module-pipelines
   trigger:

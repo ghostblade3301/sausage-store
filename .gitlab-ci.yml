@@ -31,10 +31,8 @@ deploy:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - scp ./infra/docker-compose-local.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-local.yml
-    - scp ./infra/nginx_local.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx_local.conf
     - |
-      cat > .env << EOT
+      cat > infra/.env << EOT
       VERSION="${VERSION}"
       SPRING_DATASOURCE_URL="${SPRING_DATASOURCE_URL}"
       SPRING_DATASOURCE_USERNAME="${SPRING_DATASOURCE_USERNAME}"
@@ -51,7 +49,7 @@ deploy:
       LOG_PATH=/var/log/sausage-store/sausage-store-backend.log
       REPORT_PATH=/var/log/sausage-store/report.log
       EOT
-    - |
-      ssh ${DEV_USER}@${DEV_HOST}
-      scp .env ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/.env
+    - scp ./infra/docker-compose-local.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-local.yml
+    - scp ./infra/nginx_local.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx_local.conf
+    - scp ./infra/.env ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/.env
 

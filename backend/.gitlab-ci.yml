@@ -33,6 +33,9 @@ spotbugs-sast:
     COMPILE: "false"
     SAST_JAVA_VERSION: 11
     MAVEN_REPO_PATH: ${CI_PROJECT_DIR}/.m2/repository
+  only:
+    changes:
+    - backend/*
 
 sonarqube-backend-sast:
   stage: test
@@ -47,6 +50,9 @@ sonarqube-backend-sast:
     -Dsonar.projectKey=$SONAR_PROJECT_KEY_BACK \
     -Dsonar.login=$SONAR_LOGIN_BACKEND \
     -Dsonar.qualitygate.wait=true
+  only:
+    changes:
+    - backend/*
 
 telegram-notification-backend:
   stage: notify
@@ -98,7 +104,7 @@ deploy:
       EOT
     - ssh ${DEV_USER}@${DEV_HOST} 'rm -f .env'
     - scp ./infra/docker-compose-production.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-production.yml
-    - scp ./infra/nginx_local.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx.conf
+    - scp ./infra/nginx.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx.conf
     - scp ./infra/.env ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/.env
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop backend || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f backend || true'

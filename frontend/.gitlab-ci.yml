@@ -28,6 +28,9 @@ sonarqube-frontend-sast:
     -Dsonar.projectKey=$SONAR_PROJECT_KEY_FRONT \
     -Dsonar.host.url=$SONARQUBE_URL \
     -Dsonar.login=$SONAR_LOGIN_FRONTEND
+  only:
+    changes:
+    - frontend/*
 
 telegram-notification-frontend:
   stage: notify
@@ -57,7 +60,7 @@ deploy:
     - chmod 644 ~/.ssh/known_hosts
   script:
     - scp ./infra/docker-compose-production.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-production.yml
-    - scp ./infra/nginx_local.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx.conf
+    - scp ./infra/nginx.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx.conf
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop frontend || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f frontend || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d frontend'

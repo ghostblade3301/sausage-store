@@ -1,9 +1,6 @@
 include:
   - template: Security/SAST.gitlab-ci.yml
 
-variables:
-  SAST_EXCLUDED_ANALYZERS: "eslint,semgrep,nodejs-scan"
-
 cache:
   paths:
     - ${CI_PROJECT_DIR}/.m2/repository

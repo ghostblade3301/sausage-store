@@ -53,5 +53,5 @@ deploy:
     - scp ./infra/docker-compose-production.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-local.yml
     - scp ./infra/nginx_local.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx_local.conf
     - scp ./infra/.env ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/.env
-    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml down'
+    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml down || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --build -d'

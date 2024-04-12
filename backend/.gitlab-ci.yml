@@ -43,7 +43,6 @@ sonarqube-backend-sast:
   image: maven:3.8-openjdk-16
   needs:
     - job: build-backend-image
-    - job: spotbugs-sast
   script: |
     cd backend/
     mvn verify sonar:sonar \

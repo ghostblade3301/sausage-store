@@ -4,6 +4,11 @@ stages:
   - notify
   - deploy
 
+cache:
+  paths:
+    - ${CI_PROJECT_DIR}/.m2/repository
+    - .npm/
+
 build-frontend-image:
   stage: build
   image: 

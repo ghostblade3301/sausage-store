@@ -67,7 +67,6 @@ deploy:
   stage: deploy
   needs:
     - job: sonarqube-backend-sast
-    - job: spotbugs-sast
   before_script:
     # устанавливаем ssh-agent для удобства аутентификации по ssh
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -106,3 +105,4 @@ deploy:
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop sausage-backend || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f sausage-backend || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d sausage-backend'
+    

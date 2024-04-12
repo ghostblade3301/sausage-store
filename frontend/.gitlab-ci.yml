@@ -9,27 +9,26 @@ stages:
   - build
   - test
   - notify
-  - release
   - deploy
 
-build-frontend-code-job:
-  stage: build  
-  script:        
-    - cd frontend
-    - npm install
-    - npm run build
-  artifacts:
-    paths:
-      - frontend/dist/frontend
-  only:
-     changes:
-     - frontend/**/*
+build-frontend-image:
+  stage: build
+  image: 
+    name: gcr.io/kaniko-project/executor:v1.9.0-debug
+    entrypoint: [""]
+  script:
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "${CI_PROJECT_DIR}/infra/Dockerfile_frontend"
+      --destination "${CI_REGISTRY_IMAGE}/sausage-frontend:latest"
+      --build-arg VERSION=$VERSION
+      --cache=true
 
 sonarqube-frontend-sast:
   stage: test
   image: sonarsource/sonar-scanner-cli
   needs:
-    - job: build-frontend-code-job
+    - job: build-frontend-image
   script: |
     cd frontend/
     sonar-scanner \
@@ -48,30 +47,15 @@ telegram-notification-frontend:
       --data "{\"chat_id\": \"-1002056379103\", \"text\": \"Павел Науменко собрал и протестировал frontend by sonarqube. URL: $CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-frontend-code-job\"}" \
       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
 
-upload-frontend-release:
-  stage: release
-  only:
-    changes:
-    - frontend/**/*
-  needs:
-    - build-frontend-code-job
-  script:
-    - cd frontend/dist
-    - tar czvf sausage-store-${VERSION}.tar.gz frontend
-    - >
-      curl -v -u "${NEXUS_REPO_USER}:${NEXUS_REPO_PASS}"
-      --upload-file sausage-store-${VERSION}.tar.gz
-      ${NEXUS_REPO_URL}/${NEXUS_REPO_FRONTEND_NAME}/${VERSION}/sausage-store-${VERSION}.tar.gz 
-
 deploy:
   stage: deploy
-  needs:
-    - job: upload-frontend-release
+  needs: 
+    - sonarqube-frontend-sast
   before_script:
-    #устанавливаем ssh-agent для удобства аутентификации по ssh
+    # Устанавливаем ssh-agent для удобства аутентификации по ssh
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
-    #сохраняем сгенеренный ранее приватный ключ для раннера.
+    # сохраняем сгенеренный ранее приватный ключ для раннера
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 600 ~/.ssh
@@ -79,24 +63,11 @@ deploy:
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - scp ./frontend/nginx.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/sausage-store.conf
-    - >
-      ssh ${DEV_USER}@${DEV_HOST}
-      "export "CURRENT_VERSION=${VERSION}";
-      export "VERSION=${VERSION}";
-      export "DEV_HOST=${DEV_HOST}";
-      export "NEXUS_REPO_URL=${NEXUS_REPO_URL}";
-      export "NEXUS_REPO_FRONTEND_NAME=${NEXUS_REPO_FRONTEND_NAME}";
-      export "NEXUS_REPO_USER=${NEXUS_REPO_USER}";
-      export "NEXUS_REPO_PASS=${NEXUS_REPO_PASS}";
-      setsid /bin/bash -s " < ./frontend/deploy.sh
-  environment:
-    name: review_frontend/$CI_COMMIT_REF_NAME
-    url: http://${DEV_HOST}:80
-    auto_stop_in: 1 day
-  rules:
-    - when: manual
-
+    - scp ./infra/docker-compose-production.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-production.yml
+    - scp ./infra/nginx.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx.conf
+    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop sausage-frontend || true'
+    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f sausage-frontend || true'
+    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d sausage-frontend'
 
 
 

@@ -5,5 +5,5 @@ RUN npm ci && npm run build
 
 FROM nginx:stable-alpine3.17-slim
 WORKDIR /app
-COPY --from=builder /usr/src/app/dist/frontend ./frontend
+COPY --from=builder /usr/src/app/dist/frontend /opt/monitoring/frontend/build/ 
 EXPOSE 8080

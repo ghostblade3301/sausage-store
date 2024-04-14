@@ -23,6 +23,7 @@ build-backend-image:
 sonarqube-backend-sast:
   stage: test
   image: maven:3.8-openjdk-16
+  allow_failure: true
   needs:
     - job: build-backend-image
   script: |

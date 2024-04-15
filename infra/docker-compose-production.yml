@@ -1,0 +1,26 @@
+volumes:
+  frontend_volume:
+
+services:
+  sausage-backend:
+    container_name: sausage-backend
+    image: ${CI_REGISTRY_IMAGE}/sausage-backend
+    env_file:
+      - .env
+    expose:
+      - 8080
+
+  sausage-frontend:
+    container_name: sausage-frontend
+    depends_on:
+      - sausage-backend
+    image: ${CI_REGISTRY_IMAGE}/sausage-frontend
+    env_file:
+      - .env
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+
+
+

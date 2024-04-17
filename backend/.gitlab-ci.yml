@@ -87,6 +87,8 @@ deploy:
       NEXUS_REPO_PASS="${NEXUS_REPO_PASS}"
       KEYSTORE_PASSWORD="${KEYSTORE_PASSWORD}"
       CI_REGISTRY_IMAGE="${CI_REGISTRY_IMAGE}"
+      MINIO_ROOT_USER="${MINIO_ROOT_USER}"
+      MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}"
       LOG_PATH=/var/log/sausage-store/sausage-store-backend.log
       REPORT_PATH=/var/log/sausage-store/report.log
       EOT

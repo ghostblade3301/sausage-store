@@ -7,3 +7,5 @@ FROM nginx:stable-alpine3.17-slim
 WORKDIR /app
 COPY --from=builder /usr/src/app/dist/frontend /opt/monitoring/frontend/build/ 
 EXPOSE 80
+EXPOSE 9000
+EXPOSE 9001

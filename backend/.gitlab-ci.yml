@@ -75,11 +75,8 @@ deploy:
       cat > infra/.env << EOT
       VERSION="${VERSION}"
       SPRING_DATASOURCE_URL="$(vault kv get -field=spring.datasource.url secret/sausage-store)"
-      echo $SPRING_DATASOURCE_URL
       SPRING_DATASOURCE_USERNAME="$(vault kv get -field=spring.datasource.username secret/sausage-store)"
-      echo $SPRING_DATASOURCE_USERNAME
       SPRING_DATASOURCE_PASSWORD="$(vault kv get -field=spring.datasource.password secret/sausage-store)"
-      echo $SPRING_DATASOURCE_PASSWORD
       SPRING_DATA_MONGODB_URI="$(vault kv get -field=spring.data.mongodb.uri secret/sausage-store)"
       MONGO_USER="${MONGO_USER}"
       MONGO_PASSWORD="${MONGO_PASSWORD}"

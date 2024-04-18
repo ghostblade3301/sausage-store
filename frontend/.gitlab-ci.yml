@@ -68,6 +68,3 @@ deploy:
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop sausage-frontend || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f sausage-frontend || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d sausage-frontend'
-
-
-

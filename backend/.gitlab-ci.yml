@@ -58,6 +58,7 @@ build-backend-image:
 deploy:
   image: vault:1.11.3
   stage: deploy
+  #
   # needs:
   #   - job: sonarqube-backend-sast
   before_script:

@@ -10,7 +10,7 @@ services:
     expose:
       - 8080
 
-  backend-report:
+  sausage-backend-report:
     container_name: backend-report
     image: ${CI_REGISTRY_IMAGE}/sausage-backend-report
     environment:

@@ -10,6 +10,13 @@ services:
     expose:
       - 8080
 
+  backend-report:
+    container_name: backend-report
+    image: ${CI_REGISTRY_IMAGE}/sausage-backend-report
+    environment:
+      DB: ${SPRING_DATA_MONGODB_URI}
+      PORT: 8082
+
   sausage-frontend:
     container_name: sausage-frontend
     depends_on:

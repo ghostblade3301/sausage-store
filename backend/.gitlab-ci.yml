@@ -43,7 +43,7 @@ build-backend-image:
 #     -Dsonar.login=$SONAR_LOGIN_BACKEND \
 #     -Dsonar.qualitygate.wait=true \
 #     -DskipTests=true
-
+#
 # telegram-notification-backend:
 #   stage: notify
 #   needs:

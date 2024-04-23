@@ -29,7 +29,7 @@ build-backend-report:
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/infra/Dockerfile_backend_report"
-      --destination "${CI_REGISTRY_IMAGE}/sausage-backend_report:latest"
+      --destination "${CI_REGISTRY_IMAGE}/sausage-backend-report:latest"
       --build-arg VERSION=$VERSION
       --cache=true
 

@@ -19,14 +19,8 @@ build-backend-image:
       --destination "${CI_REGISTRY_IMAGE}/sausage-backend:latest"
       --build-arg VERSION=$VERSION
       --cache=true
-    - mkdir artifacts
-    - touch test.test
-    - cp test.test ./artifacts/
-  artifacts:
-    paths:
-      - artifacts/
 
-build-backend-report:
+build-backend-report-image:
   stage: build
   image: 
     name: gcr.io/kaniko-project/executor:v1.9.0-debug
@@ -62,7 +56,7 @@ build-backend-report:
 #     -Dsonar.login=$SONAR_LOGIN_BACKEND \
 #     -Dsonar.qualitygate.wait=true \
 #     -DskipTests=true
-#
+
 # telegram-notification-backend:
 #   stage: notify
 #   needs:
@@ -77,27 +71,22 @@ build-backend-report:
 deploy:
   image: vault:1.11.3
   stage: deploy
-  #
   # needs:
   #   - job: sonarqube-backend-sast
   before_script:
     - apk add openssh-client bash
     - eval $(ssh-agent -s)
-    # сохраняем сгенеренный ранее приватный ключ для раннера
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - chmod 600 ~/.ssh
+    - chmod 700 ~/.ssh
     - SSH_KNOWN_HOSTS=$(ssh-keyscan ${DEV_HOST})
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - cp artifacts/test.test .
-    - scp test.test ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/test.test
-    - export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
     - |
+      export VAULT_TOKEN="$(vault write -field=token auth/jwt/login role=sausage-store jwt=$CI_JOB_JWT)"
       cat > infra/.env << EOT
       VERSION="${VERSION}"
-      SPRING_CLOUD_VAULT_TOKEN=${SPRING_CLOUD_VAULT_TOKEN}
       SPRING_DATASOURCE_URL="$(vault kv get -field=spring.datasource.url secret/sausage-store)"
       SPRING_DATASOURCE_USERNAME="$(vault kv get -field=spring.datasource.username secret/sausage-store)"
       SPRING_DATASOURCE_PASSWORD="$(vault kv get -field=spring.datasource.password secret/sausage-store)"
@@ -116,16 +105,10 @@ deploy:
       LOG_PATH=/var/log/sausage-store/sausage-store-backend.log
       REPORT_PATH=/var/log/sausage-store/report.log
       EOT
-    - ssh ${DEV_USER}@${DEV_HOST} 'rm -f .env || true'
+    - ssh ${DEV_USER}@${DEV_HOST} 'rm -f .env'
     - scp ./infra/docker-compose-production.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-production.yml
     - scp ./infra/nginx.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx.conf
     - scp ./infra/.env ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/.env
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop sausage-backend || true'
-    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop sausage-backend-report || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f sausage-backend || true'
-    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f sausage-backend-report || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d sausage-backend'
-    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d sausage-backend-report'
-    
-
-

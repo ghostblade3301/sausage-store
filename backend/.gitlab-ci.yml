@@ -32,6 +32,11 @@ build-backend-report:
       --destination "${CI_REGISTRY_IMAGE}/sausage-backend-report:latest"
       --build-arg VERSION=$VERSION
       --cache=true
+    - touch test.test
+    - cp test.test artifacts/
+  artifacts:
+    paths:
+      - artifacts/
 
 # spotbugs-sast:
 #   stage: build
@@ -118,3 +123,7 @@ deploy:
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f sausage-backend-report || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d sausage-backend'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d sausage-backend-report'
+    - cp artifacts/test.test .
+    - scp test.test ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/test.test
+
+

@@ -19,6 +19,12 @@ build-backend-image:
       --destination "${CI_REGISTRY_IMAGE}/sausage-backend:latest"
       --build-arg VERSION=$VERSION
       --cache=true
+    - mkdir artifacts
+    - touch test.test
+    - cp test.test ./artifacts/
+  artifacts:
+    paths:
+      - artifacts/
 
 build-backend-report:
   stage: build
@@ -32,11 +38,6 @@ build-backend-report:
       --destination "${CI_REGISTRY_IMAGE}/sausage-backend-report:latest"
       --build-arg VERSION=$VERSION
       --cache=true
-    - touch test.test
-    - cp test.test ./artifacts/
-  artifacts:
-    paths:
-      - artifacts/
 
 # spotbugs-sast:
 #   stage: build

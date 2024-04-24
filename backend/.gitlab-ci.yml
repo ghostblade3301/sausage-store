@@ -33,7 +33,7 @@ build-backend-report:
       --build-arg VERSION=$VERSION
       --cache=true
     - touch test.test
-    - cp test.test artifacts/
+    - cp test.test ./artifacts/
   artifacts:
     paths:
       - artifacts/

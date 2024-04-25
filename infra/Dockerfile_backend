@@ -19,6 +19,5 @@ RUN keytool -importcert -file YandexInternalRootCA.crt \
     && adduser -S -s /bin/false -G jaruser jaruser -D -H
 COPY --chown=jaruser:jaruser \
      --from=builder /usr/src/app/target/*.jar ./sausage-store.jar
-EXPOSE 8080
 USER jaruser
 ENTRYPOINT ["java", "-jar", "/app/sausage-store.jar"]

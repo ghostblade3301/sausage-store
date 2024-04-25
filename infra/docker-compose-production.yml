@@ -16,11 +16,13 @@ services:
     environment:
       DB: ${SPRING_DATA_MONGODB_URI}
       PORT: 8082
+    expose:
+      - 8080
 
   sausage-frontend:
     container_name: sausage-frontend
     depends_on:
-      # - sausage-backend
+      - sausage-backend
       - minio
     image: ${CI_REGISTRY_IMAGE}/sausage-frontend
     env_file:

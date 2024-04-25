@@ -15,7 +15,7 @@ services:
     image: ${CI_REGISTRY_IMAGE}/sausage-backend-report
     environment:
       DB: ${SPRING_DATA_MONGODB_URI}
-      PORT: 8082
+      PORT: 8080
     expose:
       - 8080
 

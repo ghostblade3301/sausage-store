@@ -2,7 +2,8 @@ volumes:
   frontend_volume:
 
 networks:
-  sausage_network: 
+  sausage_network:
+    external: true
 
 services:
   sausage-backend:

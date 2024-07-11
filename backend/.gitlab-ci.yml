@@ -74,7 +74,7 @@ deploy:
   needs:
     - job: sonarqube-backend-sast
   before_script:
-    - apk add openssh-client bash
+    - apk add openssh-client bash jq
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
@@ -95,13 +95,33 @@ deploy:
       CI_REGISTRY_IMAGE="${CI_REGISTRY_IMAGE}"
       MINIO_ROOT_USER="${MINIO_ROOT_USER}"
       MINIO_ROOT_PASSWORD="${MINIO_ROOT_PASSWORD}"
-      LOG_PATH=/var/log/sausage-store/sausage-store-backend.log
-      REPORT_PATH=/var/log/sausage-store/report.log
+      VIRTUAL_HOST="${VIRTUAL_HOST}"
       EOT
     - ssh ${DEV_USER}@${DEV_HOST} 'rm -f .env'
     - scp ./infra/docker-compose-production.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-production.yml
-    - scp ./infra/nginx.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx.conf
     - scp ./infra/.env ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/.env
-    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop sausage-backend || true'
-    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f sausage-backend || true'
-    - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d sausage-backend'
+    - blue_status=$(ssh ${DEV_USER}@${DEV_HOST} 'docker container inspect --format "{{json .State.Health }}" backend-blue | jq -r '.Status' || true')
+    - green_status=$(ssh ${DEV_USER}@${DEV_HOST} 'docker container inspect --format "{{json .State.Health }}" backend-green | jq -r '.Status' || true')
+    - |
+      deploy_backend() {
+        local backend_color=$1
+        local other_backend_color=$([ "$backend_color" == "blue" ] && echo "green" || echo "blue")
+        ssh ${DEV_USER}@${DEV_HOST} "docker compose -f docker-compose-production.yml pull backend-${backend_color}"
+        ssh ${DEV_USER}@${DEV_HOST} "docker compose -f docker-compose-production.yml up --force-recreate -d backend-${backend_color}"
+        while [ "$(ssh ${DEV_USER}@${DEV_HOST} "docker container inspect --format '{{json .State.Health }}' backend-${backend_color}" | jq -r '.Status')" != 'healthy' ]; do
+          sleep 5
+        done
+        ssh ${DEV_USER}@${DEV_HOST} "docker compose -f docker-compose-production.yml stop backend-${other_backend_color}"
+        echo "${backend_color} backend started"
+      }
+    - |
+      if [ "$(ssh ${DEV_USER}@${DEV_HOST} 'docker container inspect --format "{{json .State.Health }}" backend-blue | jq -r ".Status"')" == 'healthy' ]; then
+        deploy_backend "green"
+      elif [ "$(ssh ${DEV_USER}@${DEV_HOST} 'docker container inspect --format "{{json .State.Health }}" backend-green | jq -r ".Status"')" == 'healthy' ]; then
+        deploy_backend "blue"
+      else
+        deploy_backend "blue"
+        echo "Blue backend started because no other healthy containers"
+      fi
+    - ssh ${DEV_USER}@${DEV_HOST} 'docker image prune -af'
+

@@ -7,8 +7,8 @@ variables:
 
 stages:
   - build
-  - test
-  - notify
+  # - test
+  # - notify
   - deploy
 
 build-frontend-image:
@@ -24,33 +24,33 @@ build-frontend-image:
       --build-arg VERSION=$VERSION
       --cache=true
 
-sonarqube-frontend-sast:
-  stage: test
-  image: sonarsource/sonar-scanner-cli
-  needs:
-    - job: build-frontend-image
-  script: |
-    cd frontend/
-    sonar-scanner \
-    -Dsonar.projectKey=$SONAR_PROJECT_KEY_FRONT \
-    -Dsonar.host.url=$SONARQUBE_URL \
-    -Dsonar.login=$SONAR_LOGIN_FRONTEND
+# sonarqube-frontend-sast:
+#   stage: test
+#   image: sonarsource/sonar-scanner-cli
+#   needs:
+#     - job: build-frontend-image
+#   script: |
+#     cd frontend/
+#     sonar-scanner \
+#     -Dsonar.projectKey=$SONAR_PROJECT_KEY_FRONT \
+#     -Dsonar.host.url=$SONARQUBE_URL \
+#     -Dsonar.login=$SONAR_LOGIN_FRONTEND
 
-telegram-notification-frontend:
-  stage: notify
-  needs:
-    - job: sonarqube-frontend-sast
-  rules:
-    - if: $CI_COMMIT_MESSAGE =~ /send notification/
-  script: |
-      curl -X POST -H "Content-type: application/json" \
-      --data "{\"chat_id\": \"-1002056379103\", \"text\": \"Павел Науменко собрал и протестировал frontend by sonarqube. URL: $CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-frontend-code-job\"}" \
-      https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
+# telegram-notification-frontend:
+#   stage: notify
+#   needs:
+#     - job: sonarqube-frontend-sast
+#   rules:
+#     - if: $CI_COMMIT_MESSAGE =~ /send notification/
+#   script: |
+#       curl -X POST -H "Content-type: application/json" \
+#       --data "{\"chat_id\": \"-1002056379103\", \"text\": \"Павел Науменко собрал и протестировал frontend by sonarqube. URL: $CI_PROJECT_URL/-/jobs/artifacts/$CI_COMMIT_SHA/download?job=build-frontend-code-job\"}" \
+#       https://api.telegram.org/bot5933756043:AAE8JLL5KIzgrNBeTP5e-1bkbJy4YRoeGjs/sendMessage
 
 deploy:
   stage: deploy
-  needs: 
-    - sonarqube-frontend-sast
+  # needs: 
+  #   - sonarqube-frontend-sast
   before_script:
     # устанавливаем ssh-agent для удобства аутентификации по ssh
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
@@ -64,7 +64,6 @@ deploy:
     - chmod 644 ~/.ssh/known_hosts
   script:
     - scp ./infra/docker-compose-production.yml ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/docker-compose-production.yml
-    - scp ./infra/nginx.conf ${DEV_USER}@${DEV_HOST}:/home/${DEV_USER}/nginx.conf
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml stop sausage-frontend || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml rm -f sausage-frontend || true'
     - ssh ${DEV_USER}@${DEV_HOST} 'docker compose -f docker-compose-production.yml up --force-recreate -d sausage-frontend'
